@@ -8,7 +8,10 @@
     let lastMetaPressTime = 0;
     const doublePressThreshold = 300
     let timeout
-    createAnimatedLink()
+    //createAnimatedLink()
+
+//INIT  
+    document.addEventListener('mousemove', moveFollower);
 
 
 function moveFollower(event) {
@@ -20,7 +23,7 @@ function moveFollower(event) {
     //}
   }
 
-document.addEventListener('mousemove', moveFollower);
+
 
 
 chrome.runtime.onMessage.addListener(
@@ -81,7 +84,7 @@ function showFollower(){
     clearTimeout(timeout)
     timeout=setTimeout(()=>{
         hideFollower()
-    },5000)
+    },3000)
 }
 function hideFollower(){
     active=false
@@ -97,9 +100,10 @@ function hideFollower(){
 }
 
 
-document.addEventListener('keydown', function(event) {
+/*document.addEventListener('keydown', function(event) {
     // Verifica si la tecla meta (Command/Windows) fue presionada
-    if (event.metaKey) {
+    console.log("event: ",event)
+    if (event.metaKey && window.getSelection().toString()!="" && event.key=="Meta") {
       const currentTime = new Date().getTime();
   
       // Comprueba si la diferencia entre la última pulsación y la actual es menor que el umbral definido
@@ -117,4 +121,38 @@ document.addEventListener('keydown', function(event) {
         lastMetaPressTime = currentTime;
       }
     }
+  });*/
+
+
+  document.addEventListener('copy', async function(e) {
+    let copiedText=await navigator.clipboard.readText()
+    follower.innerHTML=capitalizeFirstLetter(copiedText.substring(0,18)+"...   <b style='margin-left:8px'>copied!</b>")
+    showFollower()
+
+    // SAVE THE DATA IN THE LOCAL STORAGE
+    chrome.storage.local.get('historyData', (result)=> {
+        let historyData = result.historyData || [];
+
+        //LIMIT
+            if(historyData.length > 2) {
+                // Esto eliminará el elemento más antiguo si hay más de 2 elementos
+                historyData.shift(); // elimina el primer elemento, que es el más antiguo
+            }
+
+
+        historyData.push({
+            name: copiedText.length>=18?copiedText.substring(0,18)+"...":copiedText,
+            value: copiedText,
+            dateCreated: new Date().toISOString()
+          });
+  
+        chrome.storage.local.set({ 'historyData': historyData }, ()=> {
+
+        });
+      });
+  
+    
+    // Prevenir la acción de copia por defecto si quieres sobrescribir con tus propios datos
+    e.preventDefault(); // Comenta esta línea si no quieres sobrescribir los datos copiados.
   });
+  

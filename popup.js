@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const dataList = document.getElementById('dataList');
+    const dataStoredList = document.getElementById('dataStoredList');
+    const dataHistoryList = document.getElementById('dataHistoryList');
     const dataNameInput = document.getElementById('dataName');
     const dataValueInput = document.getElementById('dataValue');
     const addDataForm = document.getElementById('addDataForm');
@@ -7,19 +8,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const donateButton = document.getElementById('donateButton');
     const addButton = document.getElementById('cn-title-add');
     const formContainer = document.getElementById('cn-form-container');
-    const btnPayYearly = document.getElementById('cn-yearly');
-    const btnPayLifetime = document.getElementById('cn-lifetime');
+    const btnPayYearlyStored = document.getElementById('cn-yearly-stored');
+    const btnPayLifetimeStored = document.getElementById('cn-lifetime-stored');
+    const btnPayYearlyHistory = document.getElementById('cn-yearly-history');
+    const btnPayLifetimeHistory = document.getElementById('cn-lifetime-history');
+    const btnSectionStored = document.getElementById('cn-title-stored');
+    const btnSectionHistory = document.getElementById('cn-title-history');
+    let section="stored";
+
+    showSection(section)
   
     // Load stored data from local storage
-    function loadData() {
-      chrome.storage.local.get('adminData', function(result) {
-        const adminData = result.adminData || [];
+    function loadStoredData() {
+      chrome.storage.local.get('storedData', function(result) {
+        const storedData = result.storedData || [];
   
         // Clear existing data
-        dataList.innerHTML = '';
+        dataStoredList.innerHTML = '';
   
         let iteration=0
-        adminData.forEach(function(item, index) {
+        storedData.forEach(function(item, index) {
 
             //CREATE THE LINE ITEM
                  const listItem = document.createElement('div');
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                     copyButton.textContent="Copied!"
                                                     //setTimeout(()=>{
                                                       copyButton.textContent="Copy"
-                                                      window.close()
+                                                      //window.close()
                                                       chrome.tabs.query({active: true, currentWindow: true}, (tabs)=> {
                                                         // tabs[0] es la pestaña actual activa
                                                         chrome.tabs.sendMessage(tabs[0].id, {action: "active",value:item.name}, function(response) {
@@ -114,9 +122,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                             saveEditButton.setAttribute("index-elem",iteration)
                                             saveEditButton.addEventListener('click', ()=> {
                                                 //SAVE THE NEW DATA
-                                                  adminData[saveEditButton.getAttribute("index-elem")] = { name: itemTitle.innerHTML, value: itemValueInput.value };
-                                                  chrome.storage.local.set({ 'adminData': adminData }, function() {
-                                                    loadData();  // Refrescar la lista
+                                                  storedData[saveEditButton.getAttribute("index-elem")] = { name: itemTitle.innerHTML, value: itemValueInput.value };
+                                                  chrome.storage.local.set({ 'storedData': storedData }, function() {
+                                                    loadStoredData();  // Refrescar la lista
                                                   });
 
                                                 //HIDE EDIT CONSTROLS
@@ -174,15 +182,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 itemEditControlsContainer.appendChild(saveEditButton);
                 itemEditControlsContainer.appendChild(cancelEditButton);
             listItem.appendChild(itemHelperDelete);
-            dataList.appendChild(listItem);
+            dataStoredList.appendChild(listItem);
 
 
 
             let actionOk=document.getElementById("cn-helper-action-ok-"+iteration)
                   actionOk.addEventListener('click', ()=> {
-                      adminData.splice(index, 1);
-                        chrome.storage.local.set({ 'adminData': adminData }, ()=> {
-                          loadData(); // Refrescar la lista
+                      storedData.splice(index, 1);
+                        chrome.storage.local.set({ 'storedData': storedData }, ()=> {
+                          loadStoredData(); // Refrescar la lista
                         });
                   });
             let actionKo=document.getElementById("cn-helper-action-ko-"+iteration)
@@ -199,9 +207,83 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
+    function loadHistoryData() {
+      chrome.storage.local.get('historyData', function(result) {
+        let historyData = result.historyData || [];
+        historyData = sortByDateDescending(historyData)
   
-    // Load data initially
-    loadData();
+        // Clear existing data
+        dataHistoryList.innerHTML = '';
+  
+        let iterationHistory=0
+        historyData.forEach(function(item, index) {
+            console.log("item history: ",item)
+            //CREATE THE LINE ITEM
+                 const listHistoryItem = document.createElement('div');
+                       listHistoryItem.className="cn-list-item-parent";
+                        //CREATE CONTAINER TITLE + CONTENT
+                            const itemHistoryNameValueContainer = document.createElement('div');
+                                    itemHistoryNameValueContainer.className="cn-list-item-namevalue-container"
+                                        //CREATE THE TITLE
+                                            const itemHistoryTitle = document.createElement('div');
+                                                    itemHistoryTitle.id="cn-list-item-title-"+iterationHistory
+                                                    itemHistoryTitle.className="cn-list-item-title"
+                                                    itemHistoryTitle.textContent=item.name
+                                    
+                                        //CREATE THE TITLE
+                                            const itemHistoryDate = document.createElement('div');
+                                                    itemHistoryDate.id="cn-list-item-date-"+iterationHistory
+                                                    itemHistoryDate.className="cn-list-item-date"
+                                                    itemHistoryDate.textContent=formatDateIntl(new Date(item.dateCreated))
+                                        //CREATE THE CONTENT
+                                            const itemHistoryValue = document.createElement('div');
+                                                    itemHistoryValue.id="cn-list-item-value-"+iterationHistory
+                                                    itemHistoryValue.innerHTML=item.value
+                                                    itemHistoryValue.className="cn-list-item-value"
+
+                        //CREATE CONTROLS CONTAINER
+                            const itemHistoryControlsContainer = document.createElement('div'); 
+                                    itemHistoryControlsContainer.className="cn-list-item-controls-container"                                                   
+                                                          
+                                //CREATE THE COPY BUTTON 
+                                    const copyHistoryButton = document.createElement('div');
+                                            copyHistoryButton.className="cn-list-item-button-copy"
+                                            copyHistoryButton.textContent = 'Copy';
+                                            copyHistoryButton.addEventListener('click', ()=> {
+                                                navigator.clipboard.writeText(item.value).then(()=> {
+                                                    console.log('Copied to clipboard');
+                                                    copyHistoryButton.textContent="Copied!"
+                                                    //setTimeout(()=>{
+                                                      copyHistoryButton.textContent="Copy"
+                                                      //window.close()
+                                                      chrome.tabs.query({active: true, currentWindow: true}, (tabs)=> {
+                                                        // tabs[0] es la pestaña actual activa
+                                                        chrome.tabs.sendMessage(tabs[0].id, {action: "active",value:item.name}, function(response) {
+                                                          console.log(response.farewell); // Respuesta del content script
+                                                        });
+                                                      });
+                                                    //},300)
+                                                }); 
+                                            });
+
+                         
+  
+            listHistoryItem.appendChild(itemHistoryNameValueContainer);
+                //itemHistoryNameValueContainer.appendChild(itemHistoryTitle);
+                itemHistoryNameValueContainer.appendChild(itemHistoryDate);
+                itemHistoryNameValueContainer.appendChild(itemHistoryValue);
+            listHistoryItem.appendChild(itemHistoryControlsContainer);
+                itemHistoryControlsContainer.appendChild(copyHistoryButton);
+            dataHistoryList.appendChild(listHistoryItem);
+
+            iterationHistory=iterationHistory+1
+        });
+
+        
+      });
+    }
+
+  
   
     // Add new data
     submitButton.addEventListener('click', (event)=> {
@@ -212,12 +294,12 @@ document.addEventListener('DOMContentLoaded', function() {
         value: dataValueInput.value,
       };
   
-      chrome.storage.local.get('adminData', (result)=> {
-        let adminData = result.adminData || [];
-        adminData.push(newData);
+      chrome.storage.local.get('storedData', (result)=> {
+        let storedData = result.storedData || [];
+        storedData.push(newData);
   
-        chrome.storage.local.set({ 'adminData': adminData }, ()=> {
-          loadData();  // Refresh the list
+        chrome.storage.local.set({ 'storedData': storedData }, ()=> {
+          loadStoredData();  // Refresh the list
           addDataForm.reset();  // Reset the form
 
           addButton.style.display="flex"
@@ -234,16 +316,98 @@ document.addEventListener('DOMContentLoaded', function() {
       dataNameInput.focus()
     });
 
-    btnPayYearly.addEventListener("click",()=>{
+    btnPayYearlyStored.addEventListener("click",()=>{
       chrome.tabs.create({ url: 'https://buy.stripe.com/eVadTG66A292g7u7sv' });
     })
 
-    btnPayLifetime.addEventListener("click",()=>{
+    btnPayLifetimeStored.addEventListener("click",()=>{
       chrome.tabs.create({ url: 'https://buy.stripe.com/00gcPC66A5lecVi004' });
     })
+
+    btnPayYearlyHistory.addEventListener("click",()=>{
+      chrome.tabs.create({ url: 'https://buy.stripe.com/eVadTG66A292g7u7sv' });
+    })
+
+    btnPayLifetimeHistory.addEventListener("click",()=>{
+      chrome.tabs.create({ url: 'https://buy.stripe.com/00gcPC66A5lecVi004' });
+    })
+
+    btnSectionStored.addEventListener("click",()=>{
+      console.log("stored")
+      showSection("stored")
+    })
+    btnSectionHistory.addEventListener("click",()=>{
+      console.log("history")
+      showSection("history")
+    })
+
+
+
+    function showSection(section){
+      if(section=="stored"){
+          document.getElementById("cn-knob-stored").style.display="flex"
+          document.getElementById("cn-knob-history").style.display="none"
+
+          document.getElementById("cn-right-stored").style.display="flex"
+          document.getElementById("cn-right-stored").classList.add("animate__animated")
+          document.getElementById("cn-right-stored").classList.add("animate__fadeIn")
+          document.getElementById("cn-right-stored").classList.add("animate__fast")
+
+          document.getElementById("cn-right-history").style.display="none"
+          document.getElementById("cn-right-history").classList.remove("animate__animated")
+          document.getElementById("cn-right-history").classList.remove("animate__fadeIn")
+          document.getElementById("cn-right-history").classList.remove("animate__fast")
+
+          document.getElementById("cn-title-stored").classList.add("cn-section-selected")
+          document.getElementById("cn-title-history").classList.remove("cn-section-selected")
+          loadStoredData()
+      }
+      else{
+          document.getElementById("cn-knob-stored").style.display="none"
+          document.getElementById("cn-knob-history").style.display="flex"
+
+          document.getElementById("cn-right-stored").style.display="none"
+          document.getElementById("cn-right-stored").classList.remove("animate__animated")
+          document.getElementById("cn-right-stored").classList.remove("animate__fadeIn")
+          document.getElementById("cn-right-stored").classList.remove("animate__fast")
+
+          document.getElementById("cn-right-history").style.display="flex"
+          document.getElementById("cn-right-history").classList.add("animate__animated")
+          document.getElementById("cn-right-history").classList.add("animate__fadeIn")
+          document.getElementById("cn-right-history").classList.add("animate__fast")
+
+          document.getElementById("cn-title-stored").classList.remove("cn-section-selected")
+          document.getElementById("cn-title-history").classList.add("cn-section-selected")
+          loadHistoryData()
+      }
+  }
 
 
 
     
   });
+
+
+  function sortByDateDescending(array) {
+    return array.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+  }
+  
+
+  function formatDateIntl(date) {
+    // Crear una instancia de DateTimeFormat con opciones de formato
+    const formatter = new Intl.DateTimeFormat('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false // Usa el formato de 24 horas
+    });
+    return formatter.format(date);
+  }
+  
+  
+  
+  
   

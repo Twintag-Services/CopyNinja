@@ -10,9 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h2 class="cn-title">Stored Data</h2>
-  <span class="cn-right">
-    <div id="dataList" class="cn-data-list">
+  <div class="cn-title-sections">
+    <h2 id="cn-title-stored" class="cn-title-section">Stored Data<span id="cn-knob-stored" class="cn-knob"></span></h2>
+    <h2 id="cn-title-history" class="cn-title-section">History Data<span id="cn-knob-history" class="cn-knob"></span></h2>
+  </div>
+  
+  <span id="cn-right-stored" class="cn-right">
+    <div id="dataStoredList" class="cn-data-list">
       <!-- Items will be populated here -->
     </div>
     <div class="cn-add-container">
@@ -33,13 +37,27 @@
       <div class="cn-unlock">
         <div class="cn-unlock-title">Unlock the 3-item limit</div>
         <span class="cn-unlock-pricing-container">
-          <div id="cn-yearly" class="cn-unlock-pricing">4,30€ yearly</div>
+          <div id="cn-yearly-stored" class="cn-unlock-pricing">4,30€ yearly</div>
           <div class="cn-unlock-separator">or</div>
-          <div id="cn-lifetime" class="cn-unlock-pricing">6€ lifetime</div>
+          <div id="cn-lifetime-stored" class="cn-unlock-pricing">6€ lifetime</div>
         </span>
       </div>
 
         
+    </div>
+  </span>
+
+  <span id="cn-right-history" class="cn-right">
+    <div id="dataHistoryList" class="cn-data-list">
+      <!-- Items will be populated here -->
+    </div>
+    <div class="cn-unlock">
+      <div class="cn-unlock-title">Unlock the 3-item limit</div>
+      <span class="cn-unlock-pricing-container">
+        <div id="cn-yearly-history" class="cn-unlock-pricing">4,30€ yearly</div>
+        <div class="cn-unlock-separator">or</div>
+        <div id="cn-lifetime-history" class="cn-unlock-pricing">6€ lifetime</div>
+      </span>
     </div>
   </span>
   <script src="popup.js"></script>

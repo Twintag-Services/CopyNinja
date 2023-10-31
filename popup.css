@@ -33,35 +33,87 @@ html,body{
         background-color: #ff7676;
         box-shadow:0px 0px 30px #ff575795;
     }
-.cn-title{
+.cn-title-sections{
     font-size: 18px;
     font-weight: 600;
     color: #333333;
     border-bottom: 1px solid #2c2a2a;
     margin: 0px;
-    padding: 16px 16px;
+    padding: 0px;
     background-color: #444444;
     color: white;
-    width: 60px;
-    background-image:url(/icons/CopyNinja_white.png);
+    min-width: 60px;
+    background-image: url(/icons/CopyNinja_white.png);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 68px;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: 98px;
+    min-height: 247px;
+    position:relative;
 }
+    .cn-title-section{
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 0px;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 16px;
+        margin-bottom:0px;
+        cursor:pointer;
+        position: relative;
+    }
+        .cn-knob{
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 12px solid #393939;
+            display: none;
+            position: absolute;
+            right: 0px;
+            top: 26px;
+        }
+        .cn-section-selected{
+            box-shadow:0px 0px 70px #595757 inset;
+        }
+        #cn-title-stored{
+
+        }
+            #cn-title-stored:hover{
+                box-shadow:0px 0px 70px #595757 inset;
+            }
+
+            
+
+        #cn-title-history{
+
+        }
+            #cn-title-history:hover{
+                box-shadow:0px 0px 70px #595757 inset;
+            }
 
 
 .cn-right{
-
-    display: flex;
     flex-direction: column;
     align-content: flex-start;
     justify-content: flex-start;
     align-items: stretch;
     width: -webkit-fill-available;
 }
+    #cn-right-stored{
+        display:none
+    }
+
+    #cn-right-history{
+        display:none
+    }
 
 .cn-data-list{
-    min-height: 0px;
+    min-height: 32px;
     display: flex;
     flex-direction: column;
     align-content: flex-start;
@@ -98,8 +150,14 @@ html,body{
             padding-top:4px;
             padding-bottom:4px;
         }
-            .cn-list-item-title{
+            .cn-list-item-date{
                 font-size:12px;
+                font-variant: small-caps;
+                color:#999;
+                font-weight: 600;
+            }
+            .cn-list-item-title{
+                font-size:14px;
                 font-variant: small-caps;
                 color:#999;
                 font-weight: 600;
