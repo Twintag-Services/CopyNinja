@@ -1,0 +1,25 @@
+{
+  "name": "copyninja",
+  "version": "1.0.0",
+  "description": "",
+  "main": "popup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Twintag-Services/CopyNinja.git"
+  },
+  "author": "Twintag Services SL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Twintag-Services/CopyNinja/issues"
+  },
+  "homepage": "https://github.com/Twintag-Services/CopyNinja#readme",
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-cssmin": "^5.0.0",
+    "grunt-contrib-obfuscator": "^8.0.0",
+    "grunt-contrib-uglify": "^5.2.2"
+  }
+}
