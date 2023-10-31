@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Copy Ninja</title>
+  <link rel="stylesheet"type="text/css" href="popup.css">
+  <link rel="stylesheet" href="animate.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="cn-title-sections">
+    <h2 id="cn-title-stored" class="cn-title-section">Stored Data<span id="cn-knob-stored" class="cn-knob"></span></h2>
+    <h2 id="cn-title-history" class="cn-title-section">History Data<span id="cn-knob-history" class="cn-knob"></span></h2>
+  </div>
+  
+  <span id="cn-right-stored" class="cn-right">
+    <div id="dataStoredList" class="cn-data-list">
+      <!-- Items will be populated here -->
+    </div>
+    <div class="cn-add-container">
+      <div id="cn-title-add" class="cn-title-add">Add item</div>
+      <span id="cn-form-container" class="cn-form-container">
+        <form id="addDataForm" class="cn-form">
+          <div class="cn-form-chip" style="margin-right:8px">
+              <label for="dataName" class="cn-form-label">Title</label>
+              <input type="text" id="dataName" placeholder="ie: Tax ID" required>
+          </div>
+          <div class="cn-form-chip">
+              <label for="dataValue" class="cn-form-label">Value to copy</label>
+              <input type="text" id="dataValue" placeholder="B111222333" required>
+          </div>
+        </form>
+        <button type="button" id="submitButton" class="cn-form-button">Save new item</button>
+      </span>
+      <div class="cn-unlock">
+        <div class="cn-unlock-title">Unlock the 3-item limit</div>
+        <span class="cn-unlock-pricing-container">
+          <div id="cn-yearly-stored" class="cn-unlock-pricing">4,30€ yearly</div>
+          <div class="cn-unlock-separator">or</div>
+          <div id="cn-lifetime-stored" class="cn-unlock-pricing">6€ lifetime</div>
+        </span>
+      </div>
+
+        
+    </div>
+  </span>
+
+  <span id="cn-right-history" class="cn-right">
+    <div id="dataHistoryList" class="cn-data-list">
+      <!-- Items will be populated here -->
+    </div>
+    <div class="cn-unlock">
+      <div class="cn-unlock-title">Unlock the 3-item limit</div>
+      <span class="cn-unlock-pricing-container">
+        <div id="cn-yearly-history" class="cn-unlock-pricing">4,30€ yearly</div>
+        <div class="cn-unlock-separator">or</div>
+        <div id="cn-lifetime-history" class="cn-unlock-pricing">6€ lifetime</div>
+      </span>
+    </div>
+  </span>
+  <script src="popup.js"></script>
+</body>
+</html>
